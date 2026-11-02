@@ -1,5 +1,6 @@
 package com.prasad.chronos
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,9 @@ import java.util.Date
 import java.util.Locale
 
 class TimeFragment : Fragment() {
+
+    private val PREF_NAME = "ChronosPrefs"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -20,23 +24,19 @@ class TimeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_time, container, false)
         val dbHelper = DatabaseHelper(requireContext())
+        val sharedPrefs = requireContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
         val btnIn = view.findViewById<Button>(R.id.btnIn)
         val btnOut = view.findViewById<Button>(R.id.btnOut)
-        val btnFetchCurrentSession =
-            view.findViewById<Button>(R.id.btnFetchCurrentSession) // Active Summary Button
+        val btnFetchCurrentSession = view.findViewById<Button>(R.id.btnFetchCurrentSession)
         val btnClear = view.findViewById<Button>(R.id.btnClear)
         val tvDisplay = view.findViewById<TextView>(R.id.tvDisplay)
-
-        // Note: btnFetch ("All Entries") is omitted completely here to remove its functionality
 
         fun saveLog(status: String) {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
             val currentDateTime = dateFormat.format(Date())
             if (dbHelper.insertTimestamp(currentDateTime, status)) {
-                Toast.makeText(context, "$status Logged: $currentDateTime", Toast.LENGTH_SHORT)
-                    .show()
-                // Auto refresh summary immediately upon a status entry
+                Toast.makeText(context, "$status Logged: $currentDateTime", Toast.LENGTH_SHORT).show()
                 btnFetchCurrentSession.performClick()
             }
         }
@@ -50,7 +50,6 @@ class TimeFragment : Fragment() {
             Toast.makeText(context, "Deleted $rows entries", Toast.LENGTH_SHORT).show()
         }
 
-        // Active Summary Click Listener
         btnFetchCurrentSession.setOnClickListener {
             val reportSummary = dbHelper.getActiveSummaryReport()
             tvDisplay.text = reportSummary

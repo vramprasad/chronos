@@ -7,16 +7,6 @@
     android:padding="20dp"
     android:background="#F5F7FA">
 
-    <!--    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Time Logger"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#1A1C1E"
-            android:gravity="center"
-            android:layout_marginBottom="20dp" />-->
-
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,12 +45,15 @@
                 android:padding="0dp" />
         </TableRow>
 
+
+
+        <!-- New Row for Show and Hide Buttons -->
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp">
 
-            <com.google.android.material.button.MaterialButton
+            <!-- <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFetch"
                 android:layout_width="0dp"
                 android:layout_height="85dp"
@@ -72,22 +65,20 @@
                 android:textColor="@android:color/white"
                 app:backgroundTint="#4A148C"
                 app:cornerRadius="12dp"
-                android:padding="0dp" />
+                android:padding="0dp" /> -->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFetchCurrentSession"
-                android:layout_width="0dp"
-                android:layout_height="85dp"
-                android:layout_marginStart="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_span="2"
                 android:text="Active Summary"
-                android:textSize="14sp"
-                android:lineSpacingExtra="2dp"
+                android:textSize="15sp"
                 android:textColor="@android:color/white"
                 app:backgroundTint="#1565C0"
                 app:cornerRadius="12dp"
                 android:padding="0dp" />
         </TableRow>
-
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

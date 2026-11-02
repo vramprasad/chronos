@@ -70,7 +70,7 @@ class DatabaseHelper(context: Context) :
     }
 
     /**
-     * Generates a structural Active Summary breakdown strictly fulfilling all 7 requested parameters.
+     * Generates a structural Active Summary breakdown strictly fulfilling all requested parameters.
      */
     fun getActiveSummaryReport(): String {
         val db = this.readableDatabase
@@ -116,10 +116,6 @@ class DatabaseHelper(context: Context) :
         val firstInTime = firstInLog.first
         val lastOutLog = logs.lastOrNull { it.second == "OUT" }
         val currentTime = Date()
-
-        // Calculate Expected OUT Time: First IN Time + 4 hours and 1 minute
-        val expectedOutMillis = firstInTime.time + (4 * 60 * 60 * 1000L) + (1 * 60 * 1000L)
-        val expectedOutTime = Date(expectedOutMillis)
 
         // Helper to cleanly print out durations
         fun formatDuration(millis: Long): String {
@@ -167,6 +163,21 @@ class DatabaseHelper(context: Context) :
         val totalBreakDurationStr = formatDuration(totalBreakMillis + activeBreakMillis)
         val breakDetails =
             if (breakDetailsBuilder.isEmpty()) "  No breaks recorded yet.\n" else breakDetailsBuilder.toString()
+
+        // --- Recalculate Expected OUT Time ---
+        // 1. Calculate temporary total break as any completed break plus any ongoing breaks
+        val tempTotalBreakMillis = totalBreakMillis + activeBreakMillis
+        val thirtyMinsMillis = 30 * 60 * 1000L
+        val offsetUnder30Millis = (4 * 60 * 60 * 1000L) + (1 * 60 * 1000L)  // 4 hours and 01 mins
+        val offsetOver30Millis = (3 * 60 * 60 * 1000L) + (31 * 60 * 1000L)   // 3 hours and 31 mins
+
+        // 2 & 3. Conditional calculation based on temporary total break duration
+        val expectedOutMillis = if (tempTotalBreakMillis < thirtyMinsMillis) {
+            firstInTime.time + offsetUnder30Millis
+        } else {
+            firstInTime.time + offsetOver30Millis + tempTotalBreakMillis
+        }
+        val expectedOutTime = Date(expectedOutMillis)
 
         // --- Dynamic Calculations 1 to 4 ---
         val lastOutMinusFirstInNoBreaks = if (lastOutLog != null) {
